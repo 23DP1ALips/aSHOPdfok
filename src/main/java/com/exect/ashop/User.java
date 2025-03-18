@@ -1,5 +1,5 @@
 package com.exect.ashop;
 
-public class App {
-    
+public class User {
+
 }
