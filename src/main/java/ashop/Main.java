@@ -14,7 +14,7 @@ public class Main {
 
     private static void showMainMenu() {
         while (true) {
-            System.out.println("\n=== Grocery Store ===");
+            System.out.println("\n=== Grocery Store ==="); 
             if (currentUser == null) {
                 System.out.println("1. Login");
                 System.out.println("2. Register");
