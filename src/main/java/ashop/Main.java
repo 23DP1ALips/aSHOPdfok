@@ -33,17 +33,23 @@ public class Main {
             System.out.println("\n".repeat(50));
         }
     }
-
+    
     private static void showMainMenu() {
         while (true) {
             clearConsole();
-            System.out.println("=== Grocery Store ===");
+            
+            // Main Menu
+            System.out.println("╔══════════════════════════════════════════════╗");
+            System.out.println("║                 aSHOPdfok MENU               ║");
+            System.out.println("╠══════════════════════════════════════════════╣");
+            
             if (currentUser == null) {
-                System.out.println("1. Login");
-                System.out.println("2. Login as Guest");
-                System.out.println("3. Register");
-                System.out.println("4. Exit");
-                System.out.print("Choose an option: ");
+                // Guest Menu
+                System.out.println("║ 1. Login                                     ║");
+                System.out.println("║ 2. Login as guest                            ║");
+                System.out.println("║ 3. Register                                  ║");
+                System.out.println("║ 4. Exit                                      ║");
+                System.out.println("╚══════════════════════════════════════════════╝");
                 
                 int choice = scanner.nextInt();
                 scanner.nextLine();
@@ -53,15 +59,13 @@ public class Main {
                         AuthUtils.login();
                         currentUser = AuthUtils.getCurrentUser();
                         if (currentUser != null) {
-                            currentCart = FileUtils.loadCart(currentUser.getUsername());
-                            showProductListWithOptions();
+                            showMainMenu(); // Go to products for logged users
                         }
                         break;
                     case 2:
-                        currentUser = new User("guest", "", 2);
-                        System.out.println("Logged in as Guest. You can view products but cannot purchase.");
+                        currentUser = new User("guest", "", 2); // Create guest session
                         showProductListWithOptions();
-                        currentUser = null;
+                        currentUser = null; // Clear guest session
                         break;
                     case 3:
                         AuthUtils.register();
@@ -69,18 +73,19 @@ public class Main {
                     case 4:
                         System.exit(0);
                     default:
-                        System.out.println("Invalid choice.");
+                        System.out.println("Invalid choice!");
                 }
             } else {
-                System.out.println("Welcome, " + currentUser.getUsername() + "!");
-                System.out.println("1. View Products");
-                System.out.println("2. View Cart");
-                System.out.println("3. Checkout");
+                System.out.println("║ Welcome, " + String.format("%-36s", currentUser.getUsername()) + "║");
+                System.out.println("╠══════════════════════════════════════════════╣");
+                System.out.println("║ 1. Browse Products                           ║");
+                System.out.println("║ 2. View Cart                                 ║");
+                System.out.println("║ 3. Checkout                                  ║");
                 if (currentUser.isAdmin()) {
-                    System.out.println("4. Admin Panel");
+                    System.out.println("║ 4. Admin Panel                               ║");
                 }
-                System.out.println("0. Logout");
-                System.out.print("Choose an option: ");
+                System.out.println("║ 0. Logout                                    ║");
+                System.out.println("╚══════════════════════════════════════════════╝");
                 
                 int choice = scanner.nextInt();
                 scanner.nextLine();
@@ -98,14 +103,11 @@ public class Main {
                     case 4:
                         if (currentUser.isAdmin()) {
                             adminPanel();
-                        } else {
-                            System.out.println("Invalid choice!");
                         }
                         break;
                     case 0:
                         AuthUtils.logout();
                         currentUser = null;
-                        currentCart.clear();
                         break;
                     default:
                         System.out.println("Invalid choice!");

@@ -29,7 +29,9 @@ public class AuthUtils {
         User user = FileUtils.findUserByUsername(username);
         if (user != null && user.getPassword().equals(password)) {
             currentUser = user;
-            System.out.println("Login successful! Welcome, " + username + "!");
+            System.out.println("╔══════════════════════════════════════════════╗");
+            System.out.println("║   Welcome to aSHOPdfok, " + String.format("%-20s", user.getUsername()) + "║");
+            System.out.println("╚══════════════════════════════════════════════╝");
             System.out.println("You are logged in as " + 
                 (user.isAdmin() ? "Admin" : "Regular User"));
         } else {
