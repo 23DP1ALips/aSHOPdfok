@@ -1,5 +1,6 @@
 package ashop.utils;
 
+import ashop.models.CartItem;
 import ashop.models.Product;
 import ashop.models.User;
 import java.io.*;
@@ -92,5 +93,40 @@ public class FileUtils {
         List<Product> products = readProducts();
         products.add(product);
         writeProducts(products);
+    }
+
+    private static final String CARTS_FILE = "src/main/resources/carts.csv";
+
+    public static void saveCart(String username, List<CartItem> cart) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(CARTS_FILE, true))) {
+            for (CartItem item : cart) {
+                bw.write(username + "," + item.toString());
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static List<CartItem> loadCart(String username) {
+        List<CartItem> cart = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(CARTS_FILE))) {
+            String line;
+            List<Product> allProducts = readProducts();
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length >= 3 && parts[0].equals(username)) {
+                    int productId = Integer.parseInt(parts[1]);
+                    int quantity = Integer.parseInt(parts[2]);
+                    allProducts.stream()
+                        .filter(p -> p.getId() == productId)
+                        .findFirst()
+                        .ifPresent(p -> cart.add(new CartItem(p, quantity)));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return cart;
     }
 }
