@@ -3,7 +3,7 @@ package ashop.models;
 public class User {
     private String username;
     private String password;
-    private int userType; // 1 for admin, 0 for regular
+    private int userType; // 1 for admin, 0 for regular, 2 for guest
 
     public User(String username, String password, int userType) {
         this.username = username;
@@ -25,6 +25,10 @@ public class User {
 
     public boolean isAdmin() {
         return userType == 1;
+    }
+
+    public boolean isGuest() {
+        return userType == 2;
     }
 
     @Override

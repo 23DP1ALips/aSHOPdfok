@@ -15,6 +15,10 @@ public class AuthUtils {
         return currentUser != null && currentUser.isAdmin();
     }
 
+    public static boolean isGuest() {
+        return currentUser != null && currentUser.isGuest();
+    }
+
     public static void login() {
         System.out.println("=== Login ===");
         System.out.print("Username: ");
@@ -26,7 +30,8 @@ public class AuthUtils {
         if (user != null && user.getPassword().equals(password)) {
             currentUser = user;
             System.out.println("Login successful! Welcome, " + username + "!");
-            System.out.println("You are logged in as " + (user.isAdmin() ? "Admin" : "Regular User"));
+            System.out.println("You are logged in as " + 
+                (user.isAdmin() ? "Admin" : "Regular User"));
         } else {
             System.out.println("Invalid username or password.");
         }
