@@ -8,18 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileUtils {
-    // Update file paths to be relative to project root
     private static final String USERS_FILE = "src/main/resources/users.csv";
     private static final String PRODUCTS_FILE = "src/main/resources/products.csv";
     private static final String CARTS_FILE = "src/main/resources/carts.csv";
 
-    // User operations
     public static List<User> readUsers() {
         List<User> users = new ArrayList<>();
         File file = new File(USERS_FILE);
         
         try {
-            // Create file and directory if they don't exist
+            // Create file and directory if don't exist
             if (!file.exists()) {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
@@ -72,7 +70,6 @@ public class FileUtils {
         return CARTS_FILE;
     }
 
-    // Keep only one findUserByUsername method
     public static User findUserByUsername(String username) {
         try {
             List<User> users = readUsers();
@@ -88,7 +85,7 @@ public class FileUtils {
         return null;
     }
 
-    // Product operations
+    // Product
     public static List<Product> readProducts() {
         List<Product> products = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(PRODUCTS_FILE))) {
@@ -135,7 +132,7 @@ public class FileUtils {
         }
     }
 
-    // Cart operations
+    // Cart
     public static void saveCart(String username, List<CartItem> cart) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(CARTS_FILE, true))) {
             for (CartItem item : cart) {

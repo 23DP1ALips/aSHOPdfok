@@ -2,7 +2,7 @@ package ashop.models;
 
 public class CartItem {
     private Product product;
-    private double quantity; // Changed to double to handle fractional weights
+    private double quantity;
 
     public CartItem(Product product, double quantity) {
         this.product = product;

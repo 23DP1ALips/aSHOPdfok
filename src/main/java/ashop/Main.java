@@ -23,8 +23,11 @@ public class Main {
     private static List<CartItem> currentCart = new ArrayList<>();
 
     public static void main(String[] args) {
+        DisplayUtils.displayAsciiArt();
         showMainMenu();
     }
+
+    
 
     public static void clearConsole() {
         System.out.print("\033[H\033[2J");
@@ -55,7 +58,7 @@ public class Main {
                         AuthUtils.login(Main::clearConsole);
                         currentUser = AuthUtils.getCurrentUser();
                         if (currentUser != null) {
-                            continue; // Go back to show the appropriate menu
+                            continue;
                         }
                         break;
                     case 2:
@@ -482,7 +485,7 @@ public class Main {
     
                     if (!username.equals(currentUser)) {
                         if (currentUser != null) {
-                            System.out.println("╠═════════════════════════════════════════════════════════════╣");
+                            System.out.println("╠══════╩════════════════════╩══════════╩══════════╩═══════════╣");
                             System.out.printf("║ %-45s %13.2f ║%n", "Total for " + currentUser + ":", userTotal);
                             System.out.println("╚═════════════════════════════════════════════════════════════╝");
                             System.out.println();
@@ -519,7 +522,7 @@ public class Main {
             if (currentUser != null) {
                 System.out.println("╠═════════════════════════════════════════════════════════════╣");
                 System.out.printf("║ %-45s %13.2f ║%n", "Total for " + currentUser + ":", userTotal);
-                System.out.println("╚═════════════════════════════════════════════════════════════╝");
+                System.out.println("╠═════════════════════════════════════════════════════════════╣");
             } else {
                 System.out.println("║                 No orders found in system                   ║");
                 System.out.println("╚═════════════════════════════════════════════════════════════╝");
@@ -531,7 +534,7 @@ public class Main {
     
         System.out.println("\nPress any key to return to admin panel...");
         scanner.nextLine();
-        adminPanel(); // Return to admin panel instead of menu
+        adminPanel();
     }
 
     private static List<Product> searchProducts(List<Product> products) {
@@ -545,33 +548,32 @@ public class Main {
             .collect(Collectors.toList());
     }
 
-    // Change from private to public
-public static void adminPanel() {
-    clearConsole();
-    System.out.println("╔══════════════════════════════════════════════╗");
-    System.out.println("║                 ADMIN PANEL                  ║");
-    System.out.println("╠══════════════════════════════════════════════╣");
-    System.out.println("║ 1. Add New Product                           ║");
-    System.out.println("║ 2. View All Orders                           ║");
-    System.out.println("║ 0. Back                                      ║");
-    System.out.println("╚══════════════════════════════════════════════╝");
-    
-    int choice = scanner.nextInt();
-    scanner.nextLine();
-    
-    switch (choice) {
-        case 1:
-            addNewProduct();
-            break;
-        case 2:
-            viewAllOrders();
-            break;
-        case 0:
-            break;
-        default:
-            System.out.println("Invalid choice!");
+    public static void adminPanel() {
+        clearConsole();
+        System.out.println("╔══════════════════════════════════════════════╗");
+        System.out.println("║                 ADMIN PANEL                  ║");
+        System.out.println("╠══════════════════════════════════════════════╣");
+        System.out.println("║ 1. Add New Product                           ║");
+        System.out.println("║ 2. View All Orders                           ║");
+        System.out.println("║ 0. Back                                      ║");
+        System.out.println("╚══════════════════════════════════════════════╝");
+        
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        
+        switch (choice) {
+            case 1:
+                addNewProduct();
+                break;
+            case 2:
+                viewAllOrders();
+                break;
+            case 0:
+                break;
+            default:
+                System.out.println("Invalid choice!");
+        }
     }
-}
 
     private static void addNewProduct() {
         System.out.println("\n=== Add New Product ===");
