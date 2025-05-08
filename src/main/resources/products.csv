@@ -1,4 +1,4 @@
-1,Apple,Fruits,0.99,96.0,unit
+1,Apple,Fruits,0.99,95.0,unit
 2,Banana,Fruits,1.79,99.0,unit
 3,Strawberry,Fruits,2.49,97.0,unit
 4,Butter,Dairy,2.99,98.0,unit
@@ -18,3 +18,4 @@
 18,Potatoes,Vegetables,0.99,78.0,weight
 19,Tomatoes,Vegetables,1.49,70.0,weight
 20,Onions,Vegetables,0.79,90.0,weight
+21,jarrr,grocery,2.0,4.0,unit
