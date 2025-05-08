@@ -9,7 +9,7 @@ bin/
 
 # Ignore everything in /target EXCEPT the final JAR
 target/*
-!target/aSHOPdfok-1.0-SNAPSHOT-jar-with-dependencies.jar
+!target/aSHOPdfok.jar
 
 # Ignore other build/IDE files
 bin/
@@ -27,3 +27,5 @@ out/
 
 # Include users.csv
 !users.csv
+!products.csv
+!carts.csv
