@@ -4,7 +4,12 @@ import ashop.models.CartItem;
 import ashop.models.Product;
 import ashop.models.User;
 import ashop.utils.AuthUtils;
+import ashop.utils.DisplayUtils;
 import ashop.utils.FileUtils;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -21,51 +26,42 @@ public class Main {
         showMainMenu();
     }
 
-    private static void clearConsole() {
-        try {
-            if (System.getProperty("os.name").contains("Windows")) {
-                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-            } else {
-                System.out.print("\033[H\033[2J");
-                System.out.flush();
-            }
-        } catch (Exception e) {
-            System.out.println("\n".repeat(50));
-        }
+    public static void clearConsole() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
     
     private static void showMainMenu() {
         while (true) {
             clearConsole();
             
-            // Main Menu
             System.out.println("╔══════════════════════════════════════════════╗");
             System.out.println("║                 aSHOPdfok MENU               ║");
             System.out.println("╠══════════════════════════════════════════════╣");
             
             if (currentUser == null) {
-                // Guest Menu
                 System.out.println("║ 1. Login                                     ║");
                 System.out.println("║ 2. Login as guest                            ║");
                 System.out.println("║ 3. Register                                  ║");
                 System.out.println("║ 4. Exit                                      ║");
                 System.out.println("╚══════════════════════════════════════════════╝");
                 
+                System.out.print("Your choice: ");
                 int choice = scanner.nextInt();
                 scanner.nextLine();
                 
                 switch (choice) {
                     case 1:
-                        AuthUtils.login();
+                        AuthUtils.login(Main::clearConsole);
                         currentUser = AuthUtils.getCurrentUser();
                         if (currentUser != null) {
-                            showMainMenu(); // Go to products for logged users
+                            continue; // Go back to show the appropriate menu
                         }
                         break;
                     case 2:
-                        currentUser = new User("guest", "", 2); // Create guest session
+                        currentUser = new User("guest", "", 2);
                         showProductListWithOptions();
-                        currentUser = null; // Clear guest session
+                        currentUser = null;
                         break;
                     case 3:
                         AuthUtils.register();
@@ -74,6 +70,7 @@ public class Main {
                         System.exit(0);
                     default:
                         System.out.println("Invalid choice!");
+                        scanner.nextLine();
                 }
             } else {
                 System.out.println("║ Welcome, " + String.format("%-36s", currentUser.getUsername()) + "║");
@@ -87,6 +84,7 @@ public class Main {
                 System.out.println("║ 0. Logout                                    ║");
                 System.out.println("╚══════════════════════════════════════════════╝");
                 
+                System.out.print("Your choice: ");
                 int choice = scanner.nextInt();
                 scanner.nextLine();
                 
@@ -111,6 +109,7 @@ public class Main {
                         break;
                     default:
                         System.out.println("Invalid choice!");
+                        scanner.nextLine();
                 }
             }
         }
@@ -122,50 +121,44 @@ public class Main {
         boolean isSearched = false;
         
         while (true) {
-            clearConsole();
+            DisplayUtils.clearConsole();
             
-            // Header
-            System.out.println("╔═════════════════════════════════════════════════════════════╗");
-            System.out.println("║                       PRODUCT CATALOG                       ║");
-            System.out.println("╠═════════════════════════════════════════════════════════════╣");
+            System.out.println("╔═══════════════════════════════════════════════════════════════════════════════╗");
+            System.out.println("║                              PRODUCT CATALOG                                  ║");
+            System.out.println("╠═══════════════════════════════════════════════════════════════════════════════╣");
             
-            // Options menu
-            if (!(isFiltered || isSearched)){
-                System.out.println("║ Options: (S)ort  (F)ilter  (Se)arch  (B)ack                 ║");
-            }
-            if (isFiltered) {
-                System.out.println("║ Options: (S)ort  (F)ilter (C)lear filters  (Se)arch  (B)ack ║");
-            }
-            if (isSearched) {
-                System.out.println("║ Options: (S)ort  (F)ilter (R)eset search  (Se)arch  (B)ack  ║");
-            }
-
-            System.out.println("╠═════════════════════════════════════════════════════════════╣");
+            String options = "Options: " + 
+                (!(isFiltered || isSearched) ? "(S)ort  (F)ilter  (Se)arch  (B)ack" :
+                isFiltered ? "(S)ort  (F)ilter (C)lear filters  (Se)arch  (B)ack" :
+                "(S)ort  (F)ilter (R)eset search  (Se)arch  (B)ack");
+    
+            System.out.println("║ " + String.format("%-78s", options) + "║");
+            System.out.println("╠══════╦══════════════════════╦════════════╦════════════╦═══════════════════════╣");
+            System.out.printf("║ %-4s ║ %-20s ║ %-10s ║ %-10s ║ %-21s ║%n", 
+                "ID", "PRODUCT NAME", "CATEGORY", "PRICE", "STOCK");
+            if (!products.isEmpty()) {System.out.println("╠══════╬══════════════════════╬════════════╬════════════╬═══════════════════════╣");}
             
-            // Column
-            System.out.printf("║ %-4s %-20s %-10s %-8s %-4s  ║%n", 
-                             "ID", "  PRODUCT NAME", "  CATEGORY", "    PRICE", "      STOCK");
-
-            // Product listing
             if (products.isEmpty()) {
-                System.out.println("╠═════════════════════════════════════════════════════════════╣");
-                System.out.println("║                    No products available                    ║");
-                System.out.println("╚═════════════════════════════════════════════════════════════╝");
+                System.out.println("╠══════╩══════════════════════╩════════════╩════════════╩═══════════════════════╣");
+                System.out.println("║                              No products available!                           ║");
+                System.out.println("╚═══════════════════════════════════════════════════════════════════════════════╝");
             } else {
-                System.out.println("╠══════╦════════════════════╦══════════╦════════════╦═════════╣");
                 for (Product product : products) {
-                    System.out.printf("║ %-4d ║ %-18s ║ %-8s ║  $%-6.2f   ║   %-5d ║%n",
-                        product.getId(),
-                        product.getName(),
-                        product.getCategory(),
-                        product.getPrice(),
-                        product.getQuantity());
+                    String name = product.getName();
+                    String category = product.getCategory();
+                    String price = product.getFormattedPrice();
+                    String stock = product.getFormattedQuantity();
+                    
+                    if (name.length() > 20) name = name.substring(0, 17) + "...";
+                    if (category.length() > 10) category = category.substring(0, 7) + "...";
+                    if (stock.length() > 21) stock = stock.substring(0, 18) + "...";
+                    
+                    System.out.printf("║ %-4d ║ %-20s ║ %-10s ║ %-10s ║ %-21s ║%n",
+                        product.getId(), name, category, price, stock);
                 }
-                System.out.println("╚══════╩════════════════════╩══════════╩════════════╩═════════╝");
             }
-
+            if (!products.isEmpty()) {System.out.println("╚══════╩══════════════════════╩════════════╩════════════╩═══════════════════════╝");}
             
-            // User input
             if (!currentUser.isGuest()) {
                 System.out.println("\n  Enter PRODUCT ID to add to cart");
                 System.out.println("  Or select an option from the menu above");
@@ -211,119 +204,121 @@ public class Main {
                             }
                         );
                 } catch (NumberFormatException e) {
-                    System.out.println("Invalid input! Press any key...");
+                    DisplayUtils.printBoxedMessage("Invalid input! Press any key to retry.");
                     scanner.nextLine();
                 }
             } else {
-                System.out.println("Invalid option! Press any key...");
+                System.out.println("╔══════════════════════════════════════════════╗");
+                System.out.println("║       Invalid option! Press any key...       ║");
+                System.out.println("╚══════════════════════════════════════════════╝");
                 scanner.nextLine();
             }
         }
     }
 
     private static void addToCart(Product product) {
-        System.out.print("Enter quantity for " + product.getName() + " (Available: " + product.getQuantity() + "): ");
-        int quantity = scanner.nextInt();
+        System.out.print("Enter " + (product.getType().equals("weight") ? "weight (kg)" : "quantity") + 
+                        " for " + product.getName() + " (" + product.getFormattedQuantity() + "): ");
+        double amount = scanner.nextDouble();
         scanner.nextLine();
         
-        if (quantity <= 0) {
-            System.out.println("Quantity must be positive!");
+        if (amount <= 0) {
+            DisplayUtils.printBoxedMessage("Amount should be positive! Press any key to retry...");
+            scanner.nextLine();
             return;
         }
         
-        if (quantity > product.getQuantity()) {
-            System.out.println("Not enough stock available!");
+        if (amount > product.getQuantity()) {
+            System.out.println("╔══════════════════════════════════════════════╗");
+            System.out.println("║ Not enough stock available!                  ║");
+            System.out.println("║ Available: " + String.format("%-32s", product.getFormattedQuantity()) + "║");
+            System.out.println("╚══════════════════════════════════════════════╝");
+            System.out.println("Press any key to continue...");
+            scanner.nextLine();
             return;
         }
+        
+        int quantityToAdd = product.getType().equals("weight") ? (int) Math.ceil(amount) : (int) amount;
         
         Optional<CartItem> existingItem = currentCart.stream()
             .filter(item -> item.getProduct().getId() == product.getId())
             .findFirst();
         
         if (existingItem.isPresent()) {
-            existingItem.get().setQuantity(existingItem.get().getQuantity() + quantity);
+            existingItem.get().setQuantity(existingItem.get().getQuantity() + quantityToAdd);
         } else {
-            currentCart.add(new CartItem(product, quantity));
+            currentCart.add(new CartItem(product, quantityToAdd));
         }
         
-        System.out.println(quantity + " " + product.getName() + "(s) added to cart!");
-    }
-
-    private static void viewCart() {
-        clearConsole();
-        if (currentCart.isEmpty()) {
-            System.out.println("Your cart is empty!");
-            return;
-        }
-        
-        System.out.println("\n=== Your Cart ===");
-        System.out.println(String.format("%-4s %-15s %-10s %-10s %-10s", 
-            "ID", "Name", "Price", "Qty", "Total"));
-        System.out.println(String.format("%-4s %-15s %-10s %-10s %-10s", 
-            "--", "----", "-----", "---", "-----"));
-        
-        double grandTotal = 0;
-        for (CartItem item : currentCart) {
-            Product p = item.getProduct();
-            double itemTotal = item.getTotalPrice();
-            grandTotal += itemTotal;
-            
-            System.out.println(String.format("%-4d %-15s %-10.2f %-10d %-10.2f",
-                p.getId(),
-                p.getName(),
-                p.getPrice(),
-                item.getQuantity(),
-                itemTotal));
-        }
-        
-        System.out.println("\nGrand Total: $" + String.format("%.2f", grandTotal));
-        System.out.println("\n1. Checkout\n2. Continue Shopping\n0. Back");
-        System.out.print("Choose option: ");
-        int choice = scanner.nextInt();
+        System.out.println("╔══════════════════════════════════════════════╗");
+        System.out.printf("║ Added: %-5.2f %-3s of %-3s to cart!   ║\n",
+            amount,
+            (product.getType().equals("weight") ? "kg" : "units"),
+            product.getName());
+        System.out.println("╚══════════════════════════════════════════════╝");
+        System.out.println("Press any key to continue...");
         scanner.nextLine();
-        
-        switch (choice) {
-            case 1:
-                checkout();
-                break;
-            case 2:
-                // Continue shopping
-                break;
-            case 0:
-                // Go back
-                break;
-            default:
-                System.out.println("Invalid choice!");
-        }
     }
 
     private static void checkout() {
+        clearConsole();
         if (currentCart.isEmpty()) {
-            System.out.println("Your cart is empty!");
+            System.out.println("╔══════════════════════════════════════════════════╗");
+            System.out.println("║   Your cart is empty! Press any key to continue  ║");
+            System.out.println("╚══════════════════════════════════════════════════╝");
+            scanner.nextLine();
             return;
         }
         
-        FileUtils.saveCart(currentUser.getUsername(), currentCart);
+        System.out.println("╔══════════════════════════════════════════════╗");
+        System.out.println("║           Confirm your order?                ║");
+        System.out.println("║ 1. Yes, proceed with checkout                ║");
+        System.out.println("║ 2. No, return to cart                        ║");
+        System.out.println("╚══════════════════════════════════════════════╝");
+        System.out.print("Your choice: ");
+        int confirm = scanner.nextInt();
+        scanner.nextLine();
         
-        List<Product> allProducts = FileUtils.readProducts();
-        for (CartItem item : currentCart) {
-            allProducts.stream()
-                .filter(p -> p.getId() == item.getProduct().getId())
-                .findFirst()
-                .ifPresent(p -> p.setQuantity(p.getQuantity() - item.getQuantity()));
+        if (confirm != 1) {
+            return;
         }
-        FileUtils.writeProducts(allProducts);
         
-        System.out.println("\n=== Checkout Complete ===");
-        System.out.println("Thank you for your purchase, " + currentUser.getUsername() + "!");
-        System.out.println("Total items purchased: " + currentCart.size());
-        System.out.println("Total amount: $" + String.format("%.2f", 
-            currentCart.stream().mapToDouble(CartItem::getTotalPrice).sum()));
-        
-        currentCart.clear();
+        try {
+            FileUtils.saveCart(currentUser.getUsername(), currentCart);
+            
+            List<Product> allProducts = FileUtils.readProducts();
+            for (CartItem item : currentCart) {
+                allProducts.stream()
+                    .filter(p -> p.getId() == item.getProduct().getId())
+                    .findFirst()
+                    .ifPresent(p -> p.setQuantity(p.getQuantity() - item.getQuantity()));
+            }
+            FileUtils.writeProducts(allProducts);
+            
+            clearConsole();
+            System.out.println("╔══════════════════════════════════════════════╗");
+            System.out.println("║           CHECKOUT COMPLETE!                 ║");
+            System.out.println("╠══════════════════════════════════════════════╣");
+            System.out.println("║ Thank you for your purchase, " + String.format("%-15s", currentUser.getUsername()) + " ║");
+            System.out.println("║ Total items purchased: " + String.format("%-22d", currentCart.size()) + "║");
+            System.out.printf("║ Total amount: $%-28.2f  ║\n", 
+                currentCart.stream().mapToDouble(CartItem::getTotalPrice).sum());
+            System.out.println("╚══════════════════════════════════════════════╝");
+            
+            currentCart.clear();
+            System.out.println("Press any key to continue...");
+            scanner.nextLine();
+        } catch (Exception e) {
+            System.out.println("╔══════════════════════════════════════════════╗");
+            System.out.println("║   Error during checkout! Please try again.   ║");
+            System.out.println("╚══════════════════════════════════════════════╝");
+            System.out.println("Press any key to continue...");
+            scanner.nextLine();
+        }
     }
 
     private static List<Product> sortProducts(List<Product> products) {
+        clearConsole();
         System.out.println("\n=== Sort Options ===");
         System.out.println("1. Name (A-Z)");
         System.out.println("2. Name (Z-A)");
@@ -372,6 +367,7 @@ public class Main {
     }
 
     private static List<Product> filterProducts(List<Product> products) {
+        clearConsole();
         List<String> categories = products.stream()
             .map(Product::getCategory)
             .distinct()
@@ -401,7 +397,145 @@ public class Main {
         }
     }
 
+    private static void viewCart() {
+        clearConsole();
+        
+        if (currentCart.isEmpty()) {
+            System.out.println("╔══════════════════════════════════════════════╗");
+            System.out.println("║             YOUR CART IS EMPTY               ║");
+            System.out.println("╠══════════════════════════════════════════════╣");
+            System.out.println("║                                              ║");
+            System.out.println("║     Add some products to get started!        ║");
+            System.out.println("║                                              ║");
+            System.out.println("╚══════════════════════════════════════════════╝");
+            System.out.println("Press any key to continue...");
+            scanner.nextLine();
+            return;
+        }
+    
+        System.out.println("╔═══════════════════════════════════════════════════════════╗");
+        System.out.println("║                       YOUR CART                           ║");
+        System.out.println("╠══════╦══════════════════════╦══════════╦══════════╦═══════╣");
+        System.out.println("║  ID  ║      PRODUCT         ║  PRICE   ║  QTY     ║ TOTAL ║");
+        System.out.println("╠══════╬══════════════════════╬══════════╬══════════╬═══════╣");
+    
+        double grandTotal = 0;
+        for (CartItem item : currentCart) {
+            Product p = item.getProduct();
+            double itemTotal = item.getTotalPrice();
+            grandTotal += itemTotal;
+            
+            System.out.printf("║ %4d ║ %-20s ║ %8.2f ║ %-8s ║ %5.2f ║\n",
+                p.getId(),
+                p.getName().length() > 20 ? p.getName().substring(0, 17) + "..." : p.getName(),
+                p.getPrice(),
+                item.getFormattedQuantity(),
+                itemTotal);
+        }
+    
+        System.out.println("╠══════╩══════════════════════╩══════════╩══════════╩═══════╣");
+        System.out.printf("║ %-47s %8.2f  ║%n", "GRAND TOTAL:", grandTotal);
+        System.out.println("╚═══════════════════════════════════════════════════════════╝");
+    
+        System.out.println("\n╔══════════════════════════════════════════════╗");
+        System.out.println("║ 1. Checkout                                  ║");
+        System.out.println("║ 2. Continue Shopping                         ║");
+        System.out.println("║ 0. Back to Main Menu                         ║");
+        System.out.println("╚══════════════════════════════════════════════╝");
+        System.out.print("Your choice: ");
+        
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        
+        switch (choice) {
+            case 1:
+                checkout();
+                break;
+            case 2:
+                showProductListWithOptions();
+                break;
+            case 0:
+                break;
+            default:
+                System.out.println("Invalid choice!");
+        }
+    }
+
+    private static void viewAllOrders() {
+        clearConsole();
+        System.out.println("╔═════════════════════════════════════════════════════════════╗");
+        System.out.println("║                    ALL ORDERS HISTORY                       ║");
+        System.out.println("╚═════════════════════════════════════════════════════════════╝");
+    
+        try (BufferedReader br = new BufferedReader(new FileReader(FileUtils.getCartsFilePath()))) {
+            String line;
+            String currentUser = null;
+            double userTotal = 0;
+            int orderCount = 0;
+    
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length >= 3) {
+                    String username = parts[0];
+                    int productId = Integer.parseInt(parts[1]);
+                    double quantity = Double.parseDouble(parts[2]);
+    
+                    if (!username.equals(currentUser)) {
+                        if (currentUser != null) {
+                            System.out.println("╠═════════════════════════════════════════════════════════════╣");
+                            System.out.printf("║ %-45s %13.2f ║%n", "Total for " + currentUser + ":", userTotal);
+                            System.out.println("╚═════════════════════════════════════════════════════════════╝");
+                            System.out.println();
+                        }
+                        currentUser = username;
+                        userTotal = 0;
+                        orderCount++;
+                        System.out.println("╔═════════════════════════════════════════════════════════════╗");
+                        System.out.printf("║ Order #%-2d for %-45s ║%n", orderCount, username);
+                        System.out.println("╠══════╦════════════════════╦══════════╦══════════╦═══════════╣");
+                        System.out.printf("║ %-4s ║ %-18s ║ %-8s ║ %-8s ║ %-9s ║%n", 
+                                        "ID", "Product", "Type", "Qty", "Price");
+                        System.out.println("╠══════╬════════════════════╬══════════╬══════════╬═══════════╣");
+                    }
+    
+                    Product product = FileUtils.readProducts().stream()
+                        .filter(p -> p.getId() == productId)
+                        .findFirst()
+                        .orElse(null);
+    
+                    if (product != null) {
+                        double itemTotal = product.getPrice() * quantity;
+                        userTotal += itemTotal;
+                        System.out.printf("║ %-4d ║ %-18s ║ %-8s ║ %-8.2f ║ $%-8.2f ║%n",
+                            product.getId(),
+                            product.getName(),
+                            product.getType(),
+                            quantity,
+                            itemTotal);
+                    }
+                }
+            }
+    
+            if (currentUser != null) {
+                System.out.println("╠═════════════════════════════════════════════════════════════╣");
+                System.out.printf("║ %-45s %13.2f ║%n", "Total for " + currentUser + ":", userTotal);
+                System.out.println("╚═════════════════════════════════════════════════════════════╝");
+            } else {
+                System.out.println("║                 No orders found in system                   ║");
+                System.out.println("╚═════════════════════════════════════════════════════════════╝");
+            }
+        } catch (IOException e) {
+            System.out.println("║                Error reading order history!                 ║");
+            System.out.println("╚═════════════════════════════════════════════════════════════╝");
+        }
+    
+        System.out.println("\nPress any key to return to admin panel...");
+        scanner.nextLine();
+        adminPanel(); // Return to admin panel instead of menu
+    }
+
     private static List<Product> searchProducts(List<Product> products) {
+        clearConsole();
         System.out.print("\nEnter search term: ");
         String term = scanner.nextLine().toLowerCase();
         
@@ -411,29 +545,33 @@ public class Main {
             .collect(Collectors.toList());
     }
 
-    private static void adminPanel() {
-        System.out.println("\n=== Admin Panel ===");
-        System.out.println("1. Add New Product");
-        System.out.println("2. View All Orders");
-        System.out.println("0. Back");
-        System.out.print("Choose option: ");
-        
-        int choice = scanner.nextInt();
-        scanner.nextLine();
-        
-        switch (choice) {
-            case 1:
-                addNewProduct();
-                break;
-            case 2:
-                viewAllOrders();
-                break;
-            case 0:
-                break;
-            default:
-                System.out.println("Invalid choice!");
-        }
+    // Change from private to public
+public static void adminPanel() {
+    clearConsole();
+    System.out.println("╔══════════════════════════════════════════════╗");
+    System.out.println("║                 ADMIN PANEL                  ║");
+    System.out.println("╠══════════════════════════════════════════════╣");
+    System.out.println("║ 1. Add New Product                           ║");
+    System.out.println("║ 2. View All Orders                           ║");
+    System.out.println("║ 0. Back                                      ║");
+    System.out.println("╚══════════════════════════════════════════════╝");
+    
+    int choice = scanner.nextInt();
+    scanner.nextLine();
+    
+    switch (choice) {
+        case 1:
+            addNewProduct();
+            break;
+        case 2:
+            viewAllOrders();
+            break;
+        case 0:
+            break;
+        default:
+            System.out.println("Invalid choice!");
     }
+}
 
     private static void addNewProduct() {
         System.out.println("\n=== Add New Product ===");
@@ -444,19 +582,22 @@ public class Main {
         System.out.print("Enter price: ");
         double price = scanner.nextDouble();
         System.out.print("Enter quantity: ");
-        int quantity = scanner.nextInt();
+        double quantity = scanner.nextDouble();
         scanner.nextLine();
+        
+        System.out.print("Is this product sold by weight? (y/n): ");
+        String typeInput = scanner.nextLine().toLowerCase();
+        String type = typeInput.startsWith("y") ? "weight" : "unit";
         
         List<Product> products = FileUtils.readProducts();
         int newId = products.stream().mapToInt(Product::getId).max().orElse(0) + 1;
         
-        Product newProduct = new Product(newId, name, category, price, quantity);
+        Product newProduct = new Product(newId, name, category, price, quantity, type);
         FileUtils.addProduct(newProduct);
-        System.out.println("Product added successfully!");
-    }
-
-    private static void viewAllOrders() {
-        // Implementation for viewing all orders
-        System.out.println("Order history functionality would go here");
+        System.out.println("╔══════════════════════════════════════════════╗");
+        System.out.println("║         Product added successfully!          ║");
+        System.out.println("╚══════════════════════════════════════════════╝");
+        System.out.println("Press any key to continue...");
+        scanner.nextLine();
     }
 }
