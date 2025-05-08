@@ -7,8 +7,18 @@ bin/
 *.iml
 .idea/
 
+# Ignore everything in /target EXCEPT the final JAR
+target/*
+!target/aSHOPdfok-1.0-SNAPSHOT-jar-with-dependencies.jar
+
+# Ignore other build/IDE files
+bin/
+*.class
+*.iml
+.idea/
+.vscode/
+
 # Ignore build directories
-target/
 out/
 
 # Ignore logs and temporary files
