@@ -1,31 +1,20 @@
 # Ignore compiled files
-bin/
 *.class
+*.jar
+*.war
+*.ear
 
-# Ignore IDE-specific files
-.vscode/
-*.iml
-.idea/
-
-# Ignore everything in /target EXCEPT the final JAR
-target/*
-!target/aSHOPdfok.jar
-
-# Ignore other build/IDE files
+# Ignore build and IDE directories
 bin/
-*.class
-*.iml
-.idea/
-.vscode/
-
-# Ignore build directories
+target/
 out/
+.idea/
+.vscode/
+*.iml
 
-# Ignore logs and temporary files
+# Ignore logs and temp files
 *.log
 *.tmp
 
-# Include users.csv
-!users.csv
-!products.csv
-!carts.csv
+# Explicitly allow CSV files in src/main/resources/
+!src/main/resources/*.csv
