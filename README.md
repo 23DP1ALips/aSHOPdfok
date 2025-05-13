@@ -52,7 +52,7 @@ Navigācija notiek, ievadot ciparu atbilstošajai izvēlei un nospiežot Enter.
 ---
 <br><br>
 
-# CarObka 🚗 [ENG]
+# aSHOPdfok [ENG]
 
 ```
                      _____ __  ______  ____      ______      __    
