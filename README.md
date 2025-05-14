@@ -36,18 +36,36 @@ Navigācija notiek, ievadot ciparu atbilstošajai izvēlei un nospiežot Enter.
 
 ## 🛠  Instalācija
 
+# Izmantojot Git clone
+
 1. Klonē repozitoriju:
    ```console
    git clone https://github.com/23DP1ALips/aSHOPdfok.git
    ```
 2. Iej repozitorijā:
-   ```bash
+   ```console
    cd aSHOPdfok
    ```
 3. Kompilē un palaid lietotni:
-   ```bash
+   ```console
    java -jar target/aSHOPdfok.jar
    ```
+
+# Lejupielādot arhīvu
+
+1. Lejupielādējiet .zip arhīvu no GitHub vai mājaslapas [![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&logoColor=white)](https://github.com/23DP1ALips)
+2. Ekstraktējiet failu uz jums piemērotāko vietu
+3. Atveriet terminālu un ar komandas
+   ```console
+   cd "faila ceļš"
+   ```
+   palīdzību izvēlieties lejupielādēto mapi
+  
+4. Izpildiet komandu: 
+   ```console 
+   java -jar target/aSHOPdfok.jar 
+   ```
+   lai palaist programmu
     
 ---
 <br><br>
@@ -89,6 +107,7 @@ Navigation is performed by entering the number of the desired option.
 
 
 ## 🛠️ Installation
+# Using Git clone
 
 1. Clone the repository:
    ```console
@@ -102,3 +121,19 @@ Navigation is performed by entering the number of the desired option.
    ```bash
    java -jar target/aSHOPdfok.jar
    ```
+
+# Downloading Zip archive
+
+1. Download .zip archive from github or page [![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&logoColor=white)](https://github.com/23DP1ALips)
+2. Extract files to your preferable location
+3. Open terminal and using this command
+   ```console
+   cd "file path"
+   ```
+   open extracted folder
+  
+4. Run command: 
+   ```console 
+   java -jar target/aSHOPdfok.jar 
+   ```
+   to run app
