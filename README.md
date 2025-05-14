@@ -11,6 +11,8 @@
 ## Autors
 
 - **Alberts Lipšāns** <br> [![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&logoColor=white)](https://github.com/23DP1ALips)
+  
+- [Web page](https://github.com/23DP1ALips/aSHOPdfok-website)
 
 ## 📝 Apraksts
 
