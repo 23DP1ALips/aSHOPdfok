@@ -53,7 +53,7 @@ Navigācija notiek, ievadot ciparu atbilstošajai izvēlei un nospiežot Enter.
 
 # Lejupielādot arhīvu
 
-1. Lejupielādējiet .zip arhīvu no GitHub vai mājaslapas [![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&logoColor=white)](https://github.com/23DP1ALips)
+1. Lejupielādējiet .zip arhīvu no GitHub vai mājaslapas
 2. Ekstraktējiet failu uz jums piemērotāko vietu
 3. Atveriet terminālu un ar komandas
    ```console
@@ -124,7 +124,7 @@ Navigation is performed by entering the number of the desired option.
 
 # Downloading Zip archive
 
-1. Download .zip archive from github or page [![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&logoColor=white)](https://github.com/23DP1ALips)
+1. Download .zip archive from github or page
 2. Extract files to your preferable location
 3. Open terminal and using this command
    ```console
